@@ -235,7 +235,9 @@ h6,
 .text-50 {
   font-size: 50px;
   line-height: 1.2; }
-
+.text-40 {
+  font-size: 40px;
+  line-height: 1.2; }
 .text-36 {
   font-size: 36px;
   line-height: 1.2; }
@@ -7606,3 +7608,187 @@ footer .logo-with-newsletter .social-link:hover {
   word-spacing: 0.05em;       /* tinh chỉnh khoảng cách giữa các từ */
   hyphens: auto;              /* cho phép ngắt từ tự động */
   }
+  /*  */
+  .img-ourProduct-container {
+    width: 100%;
+    aspect-ratio: 1200 / 715;
+    overflow: hidden;
+}
+#img-ourProduct-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+  .img-ourProduct-mini-container {
+    width: 100%;
+    aspect-ratio: 500 / 385;
+    overflow: hidden;
+}
+#img-ourProduct-1, #img-ourProduct-2, #img-ourProduct-3, #img-ourProduct-4 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+/* Map customer */
+.customer-distribution {
+        width: 100%;
+        min-height: 100vh;
+        padding: 60px 25px 40px;
+    }
+
+    .distribution-header {
+        text-align: center;
+        margin-bottom: 35px;
+    }
+    .distribution-line {
+        width: min(380px, 70%);
+        height: 3px;
+        margin: 5px auto 16px;
+
+        background: linear-gradient(
+            90deg,
+            transparent,
+            #20c997,
+            transparent
+        );
+    }
+
+    .distribution-header p {
+        margin: 0;
+        font-size: clamp(15px, 1.8vw, 19px);
+        color: #666;
+    }
+
+    .map-card {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        padding: 25px 35px 15px;
+
+        background: #fff;
+        border-radius: 28px;
+
+        box-shadow:
+            0 18px 45px rgba(0, 0, 0, 0.08),
+            0 4px 14px rgba(0, 0, 0, 0.04);
+    }
+
+    #customer-map {
+        width: 100%;
+        aspect-ratio: 1.9 / 1;
+    }
+
+    #customer-map svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .country {
+        fill: #fafafa;
+        stroke: #c7c7c7;
+        stroke-width: 0.65px;
+    }
+
+    .country.japan   { fill: #ef4444; }
+    .country.korea   { fill: #e91e63; }
+    .country.usa     { fill: #4356b8; }
+    .country.china   { fill: #43b95c; }
+    .country.india   { fill: #f6d91f; }
+    .country.brazil  { fill: #ff9800; }
+    .country.vietnam { fill: #18b5cc; }
+
+    .connection-line {
+        fill: none;
+        stroke: #f39a16;
+        stroke-width: 2.5px;
+        stroke-linecap: round;
+        opacity: .9;
+    }
+
+    .connection-dot {
+        fill: #ff9d00;
+        filter: drop-shadow(0 0 5px rgba(255, 157, 0, .8));
+    }
+
+    .location-dot {
+        stroke: #fff;
+        stroke-width: 2px;
+    }
+
+    .vietnam-pulse {
+        pointer-events: none;
+    }
+
+    .distribution-legend {
+        width: min(1200px, 100%);
+        margin: 12px auto 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+
+        padding: 8px 16px;
+        border-radius: 25px;
+
+        background: #fff;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, .10);
+
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .legend-dot.japan   { background: #ef4444; }
+    .legend-dot.korea   { background: #e91e63; }
+    .legend-dot.usa     { background: #4356b8; }
+    .legend-dot.china   { background: #43b95c; }
+    .legend-dot.india   { background: #f6d91f; }
+    .legend-dot.brazil  { background: #ff9800; }
+    .legend-dot.vietnam { background: #18b5cc; }
+
+    .status {
+        text-align: center;
+        margin-top: 14px;
+        color: #999;
+        font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+        .customer-distribution {
+            padding: 40px 12px 25px;
+        }
+
+        .map-card {
+            padding: 12px;
+            border-radius: 18px;
+        }
+
+        #customer-map {
+            aspect-ratio: 1.35 / 1;
+        }
+
+        .legend-item {
+            padding: 6px 11px;
+            font-size: 12px;
+        }
+
+        .legend-dot {
+            width: 9px;
+            height: 9px;
+        }
+    }

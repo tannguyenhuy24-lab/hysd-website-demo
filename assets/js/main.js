@@ -444,27 +444,46 @@ class ProjectSlider extends HTMLElement {
 
   init() {
     this.slider = new Swiper(this.swiper, {
+      // Navigation
       navigation: {
         nextEl: this.next,
         prevEl: this.prev,
       },
+
+      // Auto slide
+      autoplay: {
+        delay: 3000, // 3 giây chuyển slide
+        disableOnInteraction: false,
+      },
+
+      // Lặp vô hạn
+      loop: true,
+
+      // Tốc độ chuyển slide
+      speed: 800,
+
+      // Responsive
       breakpoints: {
         0: {
           spaceBetween: 20,
           slidesPerView: 1.2,
         },
+
         575: {
           spaceBetween: 20,
           slidesPerView: 1.8,
         },
+
         768: {
           spaceBetween: 20,
           slidesPerView: 2,
         },
+
         992: {
           spaceBetween: 30,
           slidesPerView: 3,
         },
+
         1280: {
           spaceBetween: 40,
           slidesPerView: 4,
@@ -1017,4 +1036,368 @@ class RecentProject extends HTMLElement {
 }
 
 customElements.define("recent-project", RecentProject);
+// Change image product
+// let currentImageIndex = -1;
 
+// function changeImageProduct() {
+//   const mainImage = document.getElementById("img-ourProduct-main");
+//   const h2OurProducts = document.getElementById("h2-our-products");
+//   const textDetailProduct = document.getElementById("text-detail-product");
+//   if (!mainImage) {
+//     return;
+//   }
+
+//   const images = [
+//     document.getElementById("img-ourProduct-1"),
+//     document.getElementById("img-ourProduct-2"),
+//     document.getElementById("img-ourProduct-3"),
+//     document.getElementById("img-ourProduct-4")
+//   ];
+
+//   if (images.some(image => !image)) {
+//     return;
+//   }
+
+//   // Lưu src gốc của mainImage
+//   if (!mainImage.dataset.originalSrc) {
+//     mainImage.dataset.originalSrc = mainImage.src;
+//   }
+
+//   currentImageIndex++;
+
+//   if (currentImageIndex >= images.length) {
+//     currentImageIndex = -1;
+//   }
+
+//   if (currentImageIndex === -1) {
+//     mainImage.src = mainImage.dataset.originalSrc;
+//   } else {
+//     mainImage.src = images[currentImageIndex].src;
+//   }
+// } 
+function changeImageProduct() {
+  const mainImage = document.getElementById("img-ourProduct-main");
+  const h2OurProducts = document.getElementById("h2-our-products");
+  const textDetailProduct = document.getElementById("text-detail-product");
+
+  // Không phải trang Product thì không làm gì
+  if (!mainImage || !h2OurProducts || !textDetailProduct) {
+    return;
+  }
+
+  const images = [
+    document.getElementById("img-ourProduct-1"),
+    document.getElementById("img-ourProduct-2"),
+    document.getElementById("img-ourProduct-3"),
+    document.getElementById("img-ourProduct-4")
+  ];
+
+  if (images.some(image => !image)) {
+    return;
+  }
+
+  // Nội dung tương ứng với từng ảnh
+  const productDetails = [
+    {
+      title: "3D Embossed Nonwoven",
+      detail: "Enhanced surface design, softness and visual differentiation."
+    },
+    {
+      title: "Perforated Nonwoven",
+      detail: "Engineered for improved liquid transfer and functional performance."
+    },
+    {
+      title: "Acquisition Distribution Layer (ADL)",
+      detail: "Designed for rapid acquisition and effective liquid distribution."
+    },
+    {
+      title: "Multi-Layer Nonwoven",
+      detail: "Customized structures combining different fibers and performance functions."
+    }
+  ];
+
+  // Lưu ảnh gốc của mainImage
+  if (!mainImage.dataset.originalSrc) {
+    mainImage.dataset.originalSrc = mainImage.src;
+    mainImage.dataset.imageIndex = "-1";
+  }
+
+  let index = Number(mainImage.dataset.imageIndex);
+
+  index++;
+
+  if (index >= images.length) {
+    index = -1;
+  }
+
+  mainImage.dataset.imageIndex = index;
+
+  // Hiển thị ảnh
+  if (index === -1) {
+    mainImage.src = mainImage.dataset.originalSrc;
+  } else {
+    mainImage.src = images[index].src;
+  }
+
+  // Thay đổi nội dung
+  if (index === -1) {
+    h2OurProducts.textContent = "Air-Through Bonded Nonwoven";
+    textDetailProduct.textContent = "Soft and bulky nonwoven for hygiene applications.";
+  } else {
+    h2OurProducts.textContent = productDetails[index].title;
+    textDetailProduct.textContent = productDetails[index].detail;
+  }
+}
+// Map customer
+document.addEventListener("DOMContentLoaded", function () {
+
+    const mapContainer = document.getElementById("customer-map");
+    const status = document.getElementById("map-status");
+
+    if (!mapContainer) return;
+
+    const width = 1200;
+    const height = 630;
+
+    const svg = d3.select("#customer-map")
+        .append("svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+
+    const projection = d3.geoNaturalEarth1()
+        .scale(195)
+        .translate([width / 2, height / 2 + 20]);
+
+    const path = d3.geoPath()
+        .projection(projection);
+
+    const mapLayer = svg.append("g");
+    const connectionLayer = svg.append("g");
+    const markerLayer = svg.append("g");
+
+    const countryColors = {
+        "392": "japan",
+        "410": "korea",
+        "840": "usa",
+        "156": "china",
+        "356": "india",
+        "076": "brazil",
+        "704": "vietnam"
+    };
+
+    /*
+     * Customer / production locations.
+     * Coordinates are [longitude, latitude].
+     */
+    const locations = {
+        usa: [-77.04, 38.90],
+        brazil: [-47.93, -15.78],
+        india: [78.96, 20.59],
+        china: [116.40, 39.90],
+        japan: [139.69, 35.68],
+        korea: [126.98, 37.56],
+        vietnam: [108.27, 16.05]
+    };
+
+    /*
+     * Connections shown on the map.
+     */
+    // All routes start from Vietnam and travel to the other countries.
+    const connections = [
+        { from: locations.vietnam, to: locations.china },
+        { from: locations.vietnam, to: locations.japan },
+        { from: locations.vietnam, to: locations.korea },
+        { from: locations.vietnam, to: locations.india },
+        { from: locations.vietnam, to: locations.usa },
+        { from: locations.vietnam, to: locations.brazil }
+    ];
+
+    d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+        .then(function (world) {
+
+            const countries = topojson.feature(
+                world,
+                world.objects.countries
+            );
+
+            mapLayer
+                .selectAll(".country")
+                .data(countries.features)
+                .enter()
+                .append("path")
+                .attr("class", function (d) {
+                    const countryId = String(d.id);
+                    return countryColors[countryId]
+                        ? `country ${countryColors[countryId]}`
+                        : "country";
+                })
+                .attr("d", path);
+
+            connections.forEach(function (connection, index) {
+                drawConnection(connection, index);
+            });
+
+            /*
+             * Add location markers after the map has loaded.
+             */
+            // Highlight Vietnam as the main origin point.
+            const vietnamPoint = projection(locations.vietnam);
+
+            markerLayer
+                .append("circle")
+                .attr("cx", vietnamPoint[0])
+                .attr("cy", vietnamPoint[1])
+                .attr("r", 10)
+                .attr("fill", "none")
+                .attr("stroke", "#18b5cc")
+                .attr("stroke-width", 2)
+                .attr("opacity", 0.9)
+                .attr("class", "vietnam-pulse");
+
+            function pulseVietnam() {
+                markerLayer
+                    .select(".vietnam-pulse")
+                    .attr("r", 7)
+                    .attr("opacity", 1)
+                    .transition()
+                    .duration(1200)
+                    .attr("r", 22)
+                    .attr("opacity", 0)
+                    .on("end", pulseVietnam);
+            }
+
+            pulseVietnam();
+
+            Object.entries(locations).forEach(function ([name, coordinates]) {
+
+                const point = projection(coordinates);
+
+                const colorClass = countryColors[
+                    {
+                        usa: "840",
+                        brazil: "076",
+                        india: "356",
+                        china: "156",
+                        japan: "392",
+                        korea: "410",
+                        vietnam: "704"
+                    }[name]
+                ];
+
+                const colorMap = {
+                    usa: "#4356b8",
+                    brazil: "#ff9800",
+                    india: "#f6d91f",
+                    china: "#43b95c",
+                    japan: "#ef4444",
+                    korea: "#e91e63",
+                    vietnam: "#18b5cc"
+                };
+
+                markerLayer
+                    .append("circle")
+                    .attr("class", "location-dot")
+                    .attr("cx", point[0])
+                    .attr("cy", point[1])
+                    .attr("r", 5)
+                    .attr("fill", colorMap[name]);
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+
+
+    function drawConnection(connection, index) {
+
+        const start = projection(connection.from);
+        const end = projection(connection.to);
+
+        const middleX = (start[0] + end[0]) / 2;
+        const middleY = (start[1] + end[1]) / 2;
+
+        const dx = end[0] - start[0];
+        const dy = end[1] - start[1];
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        const curveHeight = Math.min(
+            180,
+            Math.max(45, distance * 0.25)
+        );
+
+        const controlPoint = [
+            middleX,
+            middleY - curveHeight
+        ];
+
+        const pathData = `
+            M ${start[0]} ${start[1]}
+            Q ${controlPoint[0]} ${controlPoint[1]}
+              ${end[0]} ${end[1]}
+        `;
+
+        const connectionPath = connectionLayer
+            .append("path")
+            .attr("class", "connection-line")
+            .attr("d", pathData);
+
+        const movingDot = connectionLayer
+            .append("circle")
+            .attr("class", "connection-dot")
+            .attr("r", 4);
+
+        animateDot(
+            connectionPath,
+            movingDot,
+            index
+        );
+    }
+
+
+    function animateDot(connectionPath, movingDot, index) {
+
+        const pathNode = connectionPath.node();
+
+        if (!pathNode) return;
+
+        const totalLength = pathNode.getTotalLength();
+
+        function move() {
+
+            movingDot
+                .transition()
+                .delay(index * 250)
+                .duration(2600 + index * 250)
+                .ease(d3.easeLinear)
+                .attrTween("transform", function () {
+
+                    return function (t) {
+
+                        const point =
+                            pathNode.getPointAtLength(
+                                t * totalLength
+                            );
+
+                        return `translate(${point.x}, ${point.y})`;
+                    };
+
+                })
+                .on("end", function () {
+                    // Return to Vietnam and repeat.
+                    move();
+                });
+        }
+
+        // Every route starts exactly from the Vietnam side.
+        const startPoint = pathNode.getPointAtLength(0);
+
+        movingDot.attr(
+            "transform",
+            `translate(${startPoint.x}, ${startPoint.y})`
+        );
+
+        move();
+    }
+
+});
